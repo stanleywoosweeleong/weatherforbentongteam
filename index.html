@@ -1,4 +1,4 @@
-<!-- WeatherNext company build — weatherforjoekok — 2026-05-22T02:50:20 -->
+<!-- WeatherNext company build — weatherforbentongteam — 2026-05-22T04:13:26 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -992,7 +992,7 @@
             messagingSenderId: "90552560075",
             appId: "1:90552560075:web:e23a642cfe55778123ee4e"
         };
-        const appId = 'wnext-ag-v41-weatherforjoekok'; // COMPANY BUILD: per-company cloud-sync namespace.
+        const appId = 'wnext-ag-v41-weatherforbentongteam'; // COMPANY BUILD: per-company cloud-sync namespace.
         
         // ============================================================
         // APP_BRANDING — runtime personalization (was static config)
@@ -1024,10 +1024,10 @@
         //   WNEXT_LAUNCH_COUNT         — integer, counts launches for nudge logic
         // ============================================================
         const WNEXT_STORAGE_KEYS = {
-            userName:        'weatherforjoekok__WNEXT_USER_NAME',
-            userNameAscii:   'weatherforjoekok__WNEXT_USER_NAME_ASCII',
-            hasSeenOnboard:  'weatherforjoekok__WNEXT_HAS_SEEN_ONBOARDING',
-            launchCount:     'weatherforjoekok__WNEXT_LAUNCH_COUNT'
+            userName:        'weatherforbentongteam__WNEXT_USER_NAME',
+            userNameAscii:   'weatherforbentongteam__WNEXT_USER_NAME_ASCII',
+            hasSeenOnboard:  'weatherforbentongteam__WNEXT_HAS_SEEN_ONBOARDING',
+            launchCount:     'weatherforbentongteam__WNEXT_LAUNCH_COUNT'
         };
         
         // Read raw user name from localStorage. Returns null if not set.
@@ -1537,15 +1537,15 @@
         // (e.g. higher tier), or this shared key ever needs rotation,
         // existing custom-key users are unaffected.
         // ============================================================
-        const DEFAULT_API_KEY = 'AIzaSyAprBJMe3aOFsy36-wd98pRp60-C7ctx6Q';
-        let apiKey = localStorage.getItem('weatherforjoekok__wnext_v41_api_key') || DEFAULT_API_KEY;
+        const DEFAULT_API_KEY = 'AIzaSyBkKZZdYPJwc8NwCG8YzqE4aE2aGSa-6JQ'; // COMPANY BUILD: company's own AI Studio key.
+        let apiKey = localStorage.getItem('weatherforbentongteam__wnext_v41_api_key') || DEFAULT_API_KEY;
 
-        const WEATHER_CACHE_KEY = `weatherforjoekok__wnext_v41_weather_store`;
-        const FAV_CACHE_KEY = `weatherforjoekok__wnext_v41_favs_store`;
-        const HIDDEN_CACHE_KEY = `weatherforjoekok__wnext_v41_hidden_store`;
-        const RENAME_CACHE_KEY = `weatherforjoekok__wnext_v41_rename_store`;
-        const CUSTOM_CACHE_KEY = `weatherforjoekok__wnext_v41_custom_store`;
-        const PURGED_CACHE_KEY = `weatherforjoekok__wnext_v41_purged_store`; // NEW
+        const WEATHER_CACHE_KEY = `weatherforbentongteam__wnext_v41_weather_store`;
+        const FAV_CACHE_KEY = `weatherforbentongteam__wnext_v41_favs_store`;
+        const HIDDEN_CACHE_KEY = `weatherforbentongteam__wnext_v41_hidden_store`;
+        const RENAME_CACHE_KEY = `weatherforbentongteam__wnext_v41_rename_store`;
+        const CUSTOM_CACHE_KEY = `weatherforbentongteam__wnext_v41_custom_store`;
+        const PURGED_CACHE_KEY = `weatherforbentongteam__wnext_v41_purged_store`; // NEW
         // Detail forecast cache — stores the per-location hourly forecast payload so that
         // tapping a location feels instant when the data is fresh. Keyed by `id__model` so
         // switching weather models (ECMWF / Best Match) doesn't return stale model data.
@@ -1553,11 +1553,11 @@
         // TTL is 1 hour: weather forecasts are updated by Open-Meteo a few times per day, but
         // hourly resolution is fine enough that an hour-old cached forecast is still useful.
         // We use stale-while-revalidate: show cached data immediately, then refresh in bg.
-        const DETAIL_CACHE_KEY = `weatherforjoekok__wnext_v41_detail_store`;
+        const DETAIL_CACHE_KEY = `weatherforbentongteam__wnext_v41_detail_store`;
         const DETAIL_CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
-        const PREF_MODEL_KEY = `weatherforjoekok__wnext_v41_pref_model_store`;
-        const PREF_CROPS_KEY = `weatherforjoekok__wnext_v41_pref_crops_store`;
-        const PREF_AI_KEY = `weatherforjoekok__wnext_v41_ai_pref_map_v2`;
+        const PREF_MODEL_KEY = `weatherforbentongteam__wnext_v41_pref_model_store`;
+        const PREF_CROPS_KEY = `weatherforbentongteam__wnext_v41_pref_crops_store`;
+        const PREF_AI_KEY = `weatherforbentongteam__wnext_v41_ai_pref_map_v2`;
 
         const AI_LABELS = ["", "English Briefing", "中文 农事简报", "Bahasa Ringkasan", "தமிழ் சுருக்கம்", "မြန်မာ အကျဉ်းချုပ်"];
         let locationAiLangs = {}; 
@@ -1718,7 +1718,7 @@
             const newKey = input.value.trim();
             if (newKey) {
                 apiKey = newKey;
-                safeSet('weatherforjoekok__wnext_v41_api_key', newKey);
+                safeSet('weatherforbentongteam__wnext_v41_api_key', newKey);
                 document.getElementById('api-key-modal').classList.add('hidden');
                 if (apiKeyResolve) { apiKeyResolve(newKey); apiKeyResolve = null; }
             } else {
@@ -1739,7 +1739,7 @@
             //   3. The embedded shared default key
             // The third tier ensures fresh deep-link receivers can use AI
             // features without any setup step.
-            let key = apiKey || localStorage.getItem('weatherforjoekok__wnext_v41_api_key') || DEFAULT_API_KEY;
+            let key = apiKey || localStorage.getItem('weatherforbentongteam__wnext_v41_api_key') || DEFAULT_API_KEY;
             // Ensure URL doesn't end with & or ?
             const sep = urlNoKey.includes('?') ? '&' : '?';
             const fullUrl = (k) => `${urlNoKey}${sep}key=${k}`;
@@ -1844,7 +1844,7 @@
         // COMPANY BUILD — first-run location seed
         // ------------------------------------------------------------
         // Company : 郭大侠 农友天气
-        // Built   : 2026-05-22 02:50
+        // Built   : 2026-05-22 04:13
         // Seeds 7 company farm(s) into customLocations on the
         // VERY FIRST launch only. After that the user has full control:
         // they can delete (soft + permanent), edit, rename, add new farms,
@@ -1854,9 +1854,9 @@
         // ============================================================
         (function seedCompanyLocations() {
             var SEED_VERSION = '1';
-            var SEED_FLAG_KEY = 'weatherforjoekok__wnext_company_seed_version';
-            var CUSTOM_KEY = 'weatherforjoekok__wnext_v41_custom_store';
-            var FAV_KEY = 'weatherforjoekok__wnext_v41_favs_store';
+            var SEED_FLAG_KEY = 'weatherforbentongteam__wnext_company_seed_version';
+            var CUSTOM_KEY = 'weatherforbentongteam__wnext_v41_custom_store';
+            var FAV_KEY = 'weatherforbentongteam__wnext_v41_favs_store';
             try {
                 if (localStorage.getItem(SEED_FLAG_KEY) === SEED_VERSION) {
                     return; // already seeded this version — respect user edits/deletes
