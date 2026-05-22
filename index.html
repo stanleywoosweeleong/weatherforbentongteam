@@ -1,3 +1,4 @@
+<!-- WeatherNext company build — weatherforjoekok — 2026-05-22T02:37:10 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1031,16 +1032,14 @@
         
         // Read raw user name from localStorage. Returns null if not set.
         const getUserName = () => {
-            try { return localStorage.getItem(WNEXT_STORAGE_KEYS.userName) || null; }
-            catch (e) { return null; }
+            // COMPANY BUILD: name is fixed at build time, not user-entered.
+            return "郭大侠 农友天气";
         };
         
         // Read ASCII-safe slug for filenames. Falls back to generic if unavailable.
         const getUserNameAscii = () => {
-            try {
-                const v = localStorage.getItem(WNEXT_STORAGE_KEYS.userNameAscii);
-                return (v && v.length > 0) ? v : 'Nongyou';
-            } catch (e) { return 'Nongyou'; }
+            // COMPANY BUILD: fixed ASCII slug for screenshot filenames.
+            return "JoeKok";
         };
         
         // Sanitize an arbitrary name into a filename-safe ASCII slug.
@@ -1285,7 +1284,7 @@
                 } catch (e) { return false; }
             })();
             
-            const shouldShow = !hasName && !isDeepLinkArrival && (!hasSeen || (launches > 0 && launches % 5 === 0));
+            const shouldShow = false; // COMPANY BUILD: name is fixed, no onboarding nudge.
             
             if (shouldShow) {
                 setTimeout(() => {
@@ -1839,6 +1838,65 @@
                 em: l.lng > 108.0
             }));
         }
+
+
+        // ============================================================
+        // COMPANY BUILD — first-run location seed
+        // ------------------------------------------------------------
+        // Company : 郭大侠 农友天气
+        // Built   : 2026-05-22 02:37
+        // Seeds 7 company farm(s) into customLocations on the
+        // VERY FIRST launch only. After that the user has full control:
+        // they can delete (soft + permanent), edit, rename, add new farms,
+        // and receive shared locations from other users — exactly like the
+        // generic personalizable build. The seed never runs again unless
+        // SEED_VERSION is bumped in a future build.
+        // ============================================================
+        (function seedCompanyLocations() {
+            var SEED_VERSION = '1';
+            var SEED_FLAG_KEY = 'wnext_company_seed_version';
+            var CUSTOM_KEY = 'wnext_v41_custom_store';
+            var FAV_KEY = 'wnext_v41_favs_store';
+            try {
+                if (localStorage.getItem(SEED_FLAG_KEY) === SEED_VERSION) {
+                    return; // already seeded this version — respect user edits/deletes
+                }
+                var seedLocs = [{"id": "c_jk-kuala-repas", "en": "Bentong Kuala Repas", "zh": "文冬兵营", "lat": 3.55181, "lng": 101.8851965, "t": 0, "p": 0, "em": false}, {"id": "c_jk-happy-farm", "en": "Bentong Happy Farm", "zh": "农家乐", "lat": 3.53333, "lng": 101.88444, "t": 0, "p": 0, "em": false}, {"id": "c_jk-valley-agro-park", "en": "Bentong Valley Agro Park", "zh": "文冬山寨谷小舍", "lat": 3.67438, "lng": 101.8655, "t": 0, "p": 0, "em": false}, {"id": "c_jk-utara", "en": "Bentong Utara", "zh": "文冬市北", "lat": 3.52816, "lng": 101.915014, "t": 0, "p": 0, "em": false}, {"id": "c_jk-bukit-do", "en": "Bentong Bukit D.O", "zh": "文冬老虎山", "lat": 3.530986, "lng": 101.910808, "t": 0, "p": 0, "em": false}, {"id": "c_jk-selatan", "en": "Bentong Selatan", "zh": "文冬市南", "lat": 3.516833, "lng": 101.897667, "t": 0, "p": 0, "em": false}, {"id": "c_jk-sungai-ruan", "en": "Sungai Ruan", "zh": "双溪兰", "lat": 3.8542814, "lng": 101.9430543, "t": 0, "p": 0, "em": false}];
+                // Merge into whatever is already there (e.g. a deep-link
+                // location the user received before first cold start).
+                var existing = [];
+                try {
+                    var raw = localStorage.getItem(CUSTOM_KEY);
+                    existing = raw ? (JSON.parse(raw) || []) : [];
+                    if (!Array.isArray(existing)) existing = [];
+                } catch (e) { existing = []; }
+                var haveIds = {};
+                existing.forEach(function (l) { if (l && l.id) haveIds[l.id] = true; });
+                seedLocs.forEach(function (l) {
+                    if (!haveIds[l.id]) existing.push(l);
+                });
+                localStorage.setItem(CUSTOM_KEY, JSON.stringify(existing));
+                // Auto-favourite the seeded farms so they pin to the top on
+                // first launch (matches the app's behaviour for user-added
+                // farms). Users can unpin freely afterwards.
+                var favs = [];
+                try {
+                    var rawF = localStorage.getItem(FAV_KEY);
+                    favs = rawF ? (JSON.parse(rawF) || []) : [];
+                    if (!Array.isArray(favs)) favs = [];
+                } catch (e) { favs = []; }
+                var seedIds = ["c_jk-kuala-repas", "c_jk-happy-farm", "c_jk-valley-agro-park", "c_jk-utara", "c_jk-bukit-do", "c_jk-selatan", "c_jk-sungai-ruan"];
+                seedIds.forEach(function (id) {
+                    if (favs.indexOf(id) === -1) favs.push(id);
+                });
+                localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+                localStorage.setItem(SEED_FLAG_KEY, SEED_VERSION);
+                console.log('[company-seed] seeded', seedLocs.length,
+                            'farm(s), version', SEED_VERSION);
+            } catch (e) {
+                console.warn('[company-seed] failed', e);
+            }
+        })();
 
         async function initApp() {
             try {
