@@ -114,6 +114,34 @@ own key will need *its own* referrer restriction set to *their* domain.
 
 ---
 
+## Storage isolation — why each company is fully separate
+
+GitHub Pages serves **every project under one origin** (`<user>.github.io`).
+Browser `localStorage` is scoped to the *origin*, not the folder — so without
+isolation, `weatherforjoekok/`, `weathernextpersonal/`, and every other app
+would **share the same storage** and show each other's farms.
+
+Each company build solves this automatically: **every storage key is
+prefixed with the company's namespace** (derived from the slug). For example
+`wnext_v41_custom_store` becomes `weatherforjoekok__wnext_v41_custom_store`.
+The Firebase cloud-sync `appId` is also suffixed per company, so cloud data
+never bleeds across apps either.
+
+The upshot: a company build is a sealed box. Its farms, favourites,
+preferences, and cloud sync are completely independent of your other apps
+and of every other company build. Nothing leaks in; nothing leaks out.
+
+**If you previously tested a build that pre-dated this isolation fix** and
+saw foreign locations appear, clear the shared storage once. Open the page,
+press F12 → Console, and run:
+```js
+localStorage.clear(); location.reload();
+```
+After that, builds made with the current generator stay isolated and you
+won't need to do this again.
+
+---
+
 ## How the build differs from the generic app
 
 | Aspect            | Generic build              | Company build                          |
