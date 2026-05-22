@@ -1,4 +1,4 @@
-<!-- WeatherNext company build — weatherforbentongteam — 2026-05-22T04:13:26 -->
+<!-- WeatherNext company build — weatherforbentongteam — 2026-05-22T05:00:57 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1032,14 +1032,16 @@
         
         // Read raw user name from localStorage. Returns null if not set.
         const getUserName = () => {
-            // COMPANY BUILD: name is fixed at build time, not user-entered.
-            return "郭大侠 农友天气";
+            try { return localStorage.getItem(WNEXT_STORAGE_KEYS.userName) || null; }
+            catch (e) { return null; }
         };
         
         // Read ASCII-safe slug for filenames. Falls back to generic if unavailable.
         const getUserNameAscii = () => {
-            // COMPANY BUILD: fixed ASCII slug for screenshot filenames.
-            return "JoeKok";
+            try {
+                const v = localStorage.getItem(WNEXT_STORAGE_KEYS.userNameAscii);
+                return (v && v.length > 0) ? v : 'Nongyou';
+            } catch (e) { return 'Nongyou'; }
         };
         
         // Sanitize an arbitrary name into a filename-safe ASCII slug.
@@ -1284,7 +1286,7 @@
                 } catch (e) { return false; }
             })();
             
-            const shouldShow = false; // COMPANY BUILD: name is fixed, no onboarding nudge.
+            const shouldShow = false; // COMPANY BUILD: name is seeded, no onboarding nudge.
             
             if (shouldShow) {
                 setTimeout(() => {
@@ -1841,25 +1843,37 @@
 
 
         // ============================================================
-        // COMPANY BUILD — first-run location seed
+        // COMPANY BUILD — first-run seed (company name + farms)
         // ------------------------------------------------------------
-        // Company : 郭大侠 农友天气
-        // Built   : 2026-05-22 04:13
-        // Seeds 7 company farm(s) into customLocations on the
-        // VERY FIRST launch only. After that the user has full control:
-        // they can delete (soft + permanent), edit, rename, add new farms,
-        // and receive shared locations from other users — exactly like the
-        // generic personalizable build. The seed never runs again unless
-        // SEED_VERSION is bumped in a future build.
+        // Company : 郭大侠
+        // Built   : 2026-05-22 05:00
+        // On the VERY FIRST launch this seeds:
+        //   - the company display name (so the app shows it with no
+        //     onboarding prompt — but it stays editable via Edit Name)
+        //   - 7 company farm(s) into customLocations
+        // After that the user has full control: rename, edit, delete
+        // (soft + permanent), add new farms, receive shared locations —
+        // exactly like the generic build. The seed never runs again
+        // unless SEED_VERSION is bumped in a future build.
         // ============================================================
         (function seedCompanyLocations() {
             var SEED_VERSION = '1';
             var SEED_FLAG_KEY = 'weatherforbentongteam__wnext_company_seed_version';
             var CUSTOM_KEY = 'weatherforbentongteam__wnext_v41_custom_store';
             var FAV_KEY = 'weatherforbentongteam__wnext_v41_favs_store';
+            var NAME_KEY = 'weatherforbentongteam__WNEXT_USER_NAME';
+            var NAME_ASCII_KEY = 'weatherforbentongteam__WNEXT_USER_NAME_ASCII';
             try {
                 if (localStorage.getItem(SEED_FLAG_KEY) === SEED_VERSION) {
                     return; // already seeded this version — respect user edits/deletes
+                }
+                // --- seed the company display name (bare name, no suffix) ---
+                // The app appends ' 农友天气' itself wherever the name is shown,
+                // so we store ONLY the bare name here. Seeded only if the user
+                // hasn't already set their own name (respect prior edits).
+                if (!localStorage.getItem(NAME_KEY)) {
+                    localStorage.setItem(NAME_KEY, "郭大侠");
+                    localStorage.setItem(NAME_ASCII_KEY, "JoeKok");
                 }
                 var seedLocs = [{"id": "c_jk-kuala-repas", "en": "Bentong Kuala Repas", "zh": "文冬兵营", "lat": 3.55181, "lng": 101.8851965, "t": 0, "p": 0, "em": false}, {"id": "c_jk-happy-farm", "en": "Bentong Happy Farm", "zh": "农家乐", "lat": 3.53333, "lng": 101.88444, "t": 0, "p": 0, "em": false}, {"id": "c_jk-valley-agro-park", "en": "Bentong Valley Agro Park", "zh": "文冬山寨谷小舍", "lat": 3.67438, "lng": 101.8655, "t": 0, "p": 0, "em": false}, {"id": "c_jk-utara", "en": "Bentong Utara", "zh": "文冬市北", "lat": 3.52816, "lng": 101.915014, "t": 0, "p": 0, "em": false}, {"id": "c_jk-bukit-do", "en": "Bentong Bukit D.O", "zh": "文冬老虎山", "lat": 3.530986, "lng": 101.910808, "t": 0, "p": 0, "em": false}, {"id": "c_jk-selatan", "en": "Bentong Selatan", "zh": "文冬市南", "lat": 3.516833, "lng": 101.897667, "t": 0, "p": 0, "em": false}, {"id": "c_jk-sungai-ruan", "en": "Sungai Ruan", "zh": "双溪兰", "lat": 3.8542814, "lng": 101.9430543, "t": 0, "p": 0, "em": false}];
                 // Merge into whatever is already there (e.g. a deep-link
@@ -1891,7 +1905,7 @@
                 });
                 localStorage.setItem(FAV_KEY, JSON.stringify(favs));
                 localStorage.setItem(SEED_FLAG_KEY, SEED_VERSION);
-                console.log('[company-seed] seeded', seedLocs.length,
+                console.log('[company-seed] seeded name +', seedLocs.length,
                             'farm(s), version', SEED_VERSION);
             } catch (e) {
                 console.warn('[company-seed] failed', e);
@@ -4069,6 +4083,14 @@
                 pool.sort((a,b) => { 
                     const isFavA = favoriteIds.includes(a.id); const isFavB = favoriteIds.includes(b.id);
                     if (isFavA && !isFavB) return -1; if (!isFavA && isFavB) return 1;
+                    // COMPANY BUILD (PATCH 9): both favourites — order by favoriteIds index
+                    // (the order the user favourited them), so the favourite list is
+                    // user-controlled and persists across launches.
+                    if (isFavA && isFavB) {
+                        const idxA = favoriteIds.indexOf(a.id);
+                        const idxB = favoriteIds.indexOf(b.id);
+                        if (idxA !== idxB) return idxA - idxB;
+                    }
                     if (em) { const isSabahA = a.lng > 115.0; const isSabahB = b.lng > 115.0; if (isSabahA && !isSabahB) return -1; if (!isSabahA && isSabahB) return 1; }
                     if (Math.abs(b.lat - a.lat) > 0.0001) { return b.lat - a.lat; }
                     if (Math.abs(b.lng - a.lng) > 0.0001) { return b.lng - a.lng; }
