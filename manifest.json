@@ -2,6 +2,7 @@
   "name": "郭大侠",
   "short_name": "郭大侠天气",
   "description": "Joe & Kok 郭大侠 — farm weather forecast / 个人化农友天气预报",
+  "id": "/weatherforbentongteam/",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
