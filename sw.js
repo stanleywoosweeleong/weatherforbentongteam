@@ -36,7 +36,7 @@
 // bump CACHE_VERSION on each release
 // ============================================================
 
-const CACHE_VERSION = 'wnext-weatherforbentongteam-202606052000';
+const CACHE_VERSION = 'wnext-weatherforbentongteam-202606060900';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const WEATHER_CACHE = `${CACHE_VERSION}-weather`;

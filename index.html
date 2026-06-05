@@ -3476,7 +3476,7 @@
                     localStorage.setItem(NAME_KEY, "郭大侠");
                     localStorage.setItem(NAME_ASCII_KEY, "Bentong Team");
                 }
-                var seedLocs = [{"id": "c_jk-kuala-repas", "en": "Bentong Kuala Repas", "zh": "文冬兵营", "lat": 3.55181, "lng": 101.8851965, "t": 0, "p": 0, "em": false, "elev": 250, "zone": "lowvalley", "crop": "durian"}, {"id": "c_jk-happy-farm", "en": "Bentong Happy Farm", "zh": "农家乐", "lat": 3.53333, "lng": 101.88444, "t": 0, "p": 0, "em": false, "elev": 260, "zone": "lowvalley", "crop": "durian"}, {"id": "c_jk-valley-agro-park", "en": "Bentong Valley Agro Park", "zh": "文冬山寨谷小舍", "lat": 3.67438, "lng": 101.8655, "t": 0, "p": 0, "em": false, "elev": 350, "zone": "lowvalley", "crop": "durian"}, {"id": "c_jk-utara", "en": "Bentong Utara", "zh": "文冬市北", "lat": 3.52816, "lng": 101.915014, "t": 0, "p": 0, "em": false, "elev": 240, "zone": "openplain", "crop": "durian"}, {"id": "c_jk-bukit-do", "en": "Bentong Bukit D.O", "zh": "文冬老虎山", "lat": 3.530986, "lng": 101.910808, "t": 0, "p": 0, "em": false, "elev": 300, "zone": "lowvalley", "crop": "durian"}, {"id": "c_jk-selatan", "en": "Bentong Selatan", "zh": "文冬市南", "lat": 3.516833, "lng": 101.897667, "t": 0, "p": 0, "em": false, "elev": 240, "zone": "openplain", "crop": "durian"}, {"id": "c_jk-sungai-ruan", "en": "Sungai Ruan", "zh": "双溪兰", "lat": 3.8542814, "lng": 101.9430543, "t": 0, "p": 0, "em": false, "elev": 200, "zone": "riverine", "crop": "durian"}];
+                var seedLocs = [{"id": "c_jk-kuala-repas", "en": "Bentong Kuala Repas", "zh": "文冬兵营", "lat": 3.55181, "lng": 101.8851965, "t": 0, "p": 0, "em": false, "elev": 250, "zone": "lowvalley", "crop": "durian"}, {"id": "c_jk-happy-farm", "en": "Bentong Happy Farm", "zh": "农家乐", "lat": 3.53333, "lng": 101.88444, "t": 0, "p": 0, "em": false, "elev": 260, "zone": "lowvalley", "crop": "durian"}, {"id": "c_jk-valley-agro-park", "en": "Bentong Valley Agro Park", "zh": "文冬山寨谷小舍", "lat": 3.67438, "lng": 101.8655, "t": 0, "p": 0, "em": false, "elev": 350, "zone": "lowvalley", "crop": "durian"}, {"id": "c_jk-utara", "en": "Bentong Utara", "zh": "文冬市北", "lat": 3.52816, "lng": 101.915014, "t": 0, "p": 0, "em": false, "elev": 240, "zone": "openplain", "crop": "durian"}, {"id": "c_jk-bukit-do", "en": "Bentong Bukit D.O", "zh": "文冬县署山", "lat": 3.530986, "lng": 101.910808, "t": 0, "p": 0, "em": false, "elev": 300, "zone": "lowvalley", "crop": "durian"}, {"id": "c_jk-selatan", "en": "Bentong Selatan", "zh": "文冬市南", "lat": 3.516833, "lng": 101.897667, "t": 0, "p": 0, "em": false, "elev": 240, "zone": "openplain", "crop": "durian"}, {"id": "c_jk-sungai-ruan", "en": "Sungai Ruan", "zh": "双溪兰", "lat": 3.8542814, "lng": 101.9430543, "t": 0, "p": 0, "em": false, "elev": 200, "zone": "riverine", "crop": "durian"}];
                 // Merge into whatever is already there (e.g. a deep-link
                 // location the user received before first cold start).
                 var existing = [];
@@ -3498,9 +3498,33 @@
                 try {
                     var renameRaw = localStorage.getItem(RENAME_KEY);
                     var renameMap = renameRaw ? (JSON.parse(renameRaw) || {}) : {};
-                    // (No Cameron-era one-time name/removal migrations in the lowland
-                    // Raub architecture build — fresh seed rb-arch1. Block kept as a
-                    // best-effort no-op so future renames can hook in here.)
+
+                    // --- Bukit D.O Chinese-name correction (bt-team-bukitdo-rename) ---
+                    // Was 文冬老虎山, corrected to 文冬县署山 (县署 = District Office,
+                    // matching the English "D.O."). Targeted one-time migration so
+                    // existing installs (already past the bt-team-arch1 seed gate)
+                    // also pick up the fix. Skipped if the user has already renamed
+                    // this farm themselves — RENAME_KEY entries override seeded names
+                    // in the UI, so their edit would persist regardless, and a guard
+                    // flag prevents the migration running twice.
+                    var BUKITDO_FLAG = 'weatherforbentongteam__bt_bukitdo_rename_done';
+                    if (localStorage.getItem(BUKITDO_FLAG) !== '1') {
+                        if (!renameMap['c_jk-bukit-do']) {
+                            for (var i = 0; i < existing.length; i++) {
+                                if (existing[i] && existing[i].id === 'c_jk-bukit-do'
+                                    && existing[i].zh === '文冬老虎山') {
+                                    existing[i].zh = '文冬县署山';
+                                    console.log('[bt-bukitdo-rename] 文冬老虎山 → 文冬县署山');
+                                    break;
+                                }
+                            }
+                        }
+                        // Flag set unconditionally — the migration is considered "done"
+                        // either way (corrected, or user already renamed) so we don't
+                        // recheck on every launch.
+                        localStorage.setItem(BUKITDO_FLAG, '1');
+                    }
+
                     void renameMap;
                 } catch (e) { /* migration best-effort */ }
                 localStorage.setItem(CUSTOM_KEY, JSON.stringify(existing));

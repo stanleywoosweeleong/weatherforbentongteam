@@ -86,7 +86,7 @@ you like from inside the app. Each seeded farm carries a default crop
 | Bentong Happy Farm | 农家乐 | 3.53333, 101.88444 | sheltered basin | durian |
 | Bentong Valley Agro Park | 文冬山寨谷小舍 | 3.67438, 101.86550 | sheltered basin | durian |
 | Bentong Utara | 文冬市北 | 3.52816, 101.91501 | open plain | durian |
-| Bentong Bukit D.O | 文冬老虎山 | 3.53099, 101.91081 | sheltered basin | durian |
+| Bentong Bukit D.O | 文冬县署山 | 3.53099, 101.91081 | sheltered basin | durian |
 | Bentong Selatan | 文冬市南 | 3.51683, 101.89767 | open plain | durian |
 | Sungai Ruan | 双溪兰 | 3.85428, 101.94305 | riverine | durian |
 
@@ -151,7 +151,7 @@ The service worker caches the app shell. When you push changes, bump the
 their next visit. The current value is:
 
 ```
-wnext-weatherforbentongteam-202606052000
+wnext-weatherforbentongteam-202606060900
 ```
 
 ---
