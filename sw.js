@@ -44,7 +44,7 @@
 // day-agnostic morning wording (清晨有浓雾 / Dense fog in the morning /
 // Kabus tebal waktu pagi). Company identity (weatherforbentongteam) unchanged.
 
-const CACHE_VERSION = 'wnext-weatherforbentongteam-202606062201';
+const CACHE_VERSION = 'wnext-weatherforbentongteam-202606082100';
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const WEATHER_CACHE = `${CACHE_VERSION}-weather`;
